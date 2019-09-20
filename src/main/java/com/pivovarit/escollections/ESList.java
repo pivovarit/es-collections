@@ -121,4 +121,14 @@ class ESList<T> implements List<T> {
     public List<T> subList(int fromIndex, int toIndex) {
         return null;
     }
+
+
+    interface ListOp<R> {
+        ListOpCode op();
+        ESList<R> apply(ESList<R> list);
+    }
+
+    enum ListOpCode {
+        ADD, ADD_ALL, REMOVE_ELEM, REMOVE_INDEX, REMOVE_ALL
+    }
 }
