@@ -1,11 +1,11 @@
-package com.pivovarit.escollections;
+package com.pivovarit.escollections.list;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-class ESList<T> implements List<T> {
+public class ESList<T> implements List<T> {
 
     @Override
     public int size() {
@@ -120,15 +120,5 @@ class ESList<T> implements List<T> {
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
         return null;
-    }
-
-
-    interface ListOp<R> {
-        ListOpCode op();
-        ESList<R> apply(ESList<R> list);
-    }
-
-    enum ListOpCode {
-        ADD, ADD_ALL, REMOVE_ELEM, REMOVE_INDEX, REMOVE_ALL
     }
 }
