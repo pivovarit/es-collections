@@ -5,8 +5,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ESList<T> implements List<T> {
+
+    private final AtomicInteger version = new AtomicInteger();
+
+    private final List<ListOp<T>> eventLog = new ArrayList<>(); // TODO concurrent access
 
     private ESList() {
     }
@@ -17,32 +22,32 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int size() {
-        return 0;
+        return snapshot().size();
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return snapshot().isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        return snapshot().isEmpty();
     }
 
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return snapshot().iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return snapshot().toArray();
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return null;
+        return snapshot().toArray(a);
     }
 
     @Override
@@ -57,7 +62,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        return snapshot().containsAll(c);
     }
 
     @Override
@@ -87,7 +92,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        return null;
+        return snapshot().get(index);
     }
 
     @Override
@@ -107,26 +112,35 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int indexOf(Object o) {
-        return 0;
+        return snapshot().indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return 0;
+        return snapshot().lastIndexOf(o);
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return null;
+        return snapshot().listIterator();
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return null;
+        return snapshot().listIterator(index);
     }
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return null;
+        return snapshot().subList(fromIndex, toIndex);
+    }
+
+    private List<T> snapshot() {
+        List<T> snapshot = new ArrayList<>();
+        for (int i = 0; i < version.get(); i++) {
+            ListOp<T> tListOp = eventLog.get(i);
+            snapshot = tListOp.apply(snapshot);
+        }
+        return snapshot;
     }
 }

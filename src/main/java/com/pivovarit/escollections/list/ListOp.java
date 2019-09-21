@@ -1,6 +1,8 @@
 package com.pivovarit.escollections.list;
 
+import java.util.List;
+
 interface ListOp<R> {
     int version();
-    ESList<R> apply(ESList<R> list);
+    List<R> apply(List<R> list);
 }
