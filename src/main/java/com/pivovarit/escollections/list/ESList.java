@@ -55,18 +55,12 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
-        var op = new AddOp<>(t);
-        register(op);
-        incrementVersion();
-        return (boolean) op.apply(snapshot());
+        return (boolean) handle(new AddOp<>(t));
     }
 
     @Override
     public boolean remove(Object o) {
-        var op = new RemoveOp<T>(o);
-        register(op);
-        incrementVersion();
-        return (boolean) op.apply(snapshot());
+        return (boolean) handle(new RemoveOp<T>(o));
     }
 
     @Override
@@ -76,41 +70,27 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-        var op = new AddAllOp<T>(c);
-        register(op);
-        incrementVersion();
-        return (boolean) op.apply(snapshot());
+        return (boolean) handle(new AddAllOp<>(c));
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        var op = new AddAllIdxOp<T>(index, c);
-        register(op);
-        incrementVersion();
-        return (boolean) op.apply(snapshot());
+        return (boolean) handle(new AddAllIdxOp<>(index, c));
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        var op = new RemoveAllOp<T>(c);
-        register(op);
-        incrementVersion();
-        return (boolean) op.apply(snapshot());
+        return (boolean) handle(new RemoveAllOp<>(c));
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        var op = new RetainAllOp<T>(c);
-        register(op);
-        incrementVersion();
-        return (boolean) op.apply(snapshot());
+        return (boolean) handle(new RetainAllOp<>(c));
     }
 
     @Override
     public void clear() {
-        var op = new ClearOp<T>();
-        register(op);
-        incrementVersion();
+        handle(new ClearOp<>());
     }
 
     @Override
@@ -120,26 +100,17 @@ public class ESList<T> implements List<T> {
 
     @Override
     public T set(int index, T element) {
-        var op = new SetOp<>(index, element);
-        register(op);
-        incrementVersion();
-        return (T) op.apply(snapshot());
+        return (T) handle(new SetOp<>(index, element));
     }
 
     @Override
     public void add(int index, T element) {
-        var op = new AddIdxOp<>(index, element);
-        register(op);
-        incrementVersion();
-        op.apply(snapshot());
+        handle(new AddIdxOp<>(index, element));
     }
 
     @Override
     public T remove(int index) {
-        var op = new RemoveIdxOp<T>(index);
-        register(op);
-        incrementVersion();
-        return (T) op.apply(snapshot());
+        return (T) handle(new RemoveIdxOp<T>(index));
     }
 
     @Override
@@ -188,12 +159,9 @@ public class ESList<T> implements List<T> {
             System.out.printf("v%d :: %s%n", i, binLog.get(i).toString());
         }
     }
-
-    private void register(ListOp<T> op) {
+    private Object handle(ListOp<T> op) {
         binLog.add(op);
-    }
-
-    private void incrementVersion() {
         version.incrementAndGet();
+        return op.apply(snapshot());
     }
 }
