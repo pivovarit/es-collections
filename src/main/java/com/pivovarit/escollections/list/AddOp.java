@@ -10,8 +10,7 @@ class AddOp<T> implements ListOp<T> {
     }
 
     @Override
-    public List<T> apply(List<T> list) {
-        list.add(elem);
-        return list;
+    public Object apply(List<T> list) {
+        return list.add(elem);
     }
 }

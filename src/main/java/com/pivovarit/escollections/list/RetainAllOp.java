@@ -12,8 +12,7 @@ class RetainAllOp<T> implements ListOp<T> {
     }
 
     @Override
-    public List<T> apply(List<T> list) {
-        list.retainAll(elem);
-        return list;
+    public Object apply(List<T> list) {
+        return list.retainAll(elem);
     }
 }

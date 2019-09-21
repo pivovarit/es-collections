@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ESList<T> implements List<T> {
 
+    private final List<T> current = new ArrayList<>();
     private final AtomicInteger version = new AtomicInteger(0);
 
     /**
@@ -25,17 +26,17 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int size() {
-        return snapshot().size();
+        return current.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return snapshot().isEmpty();
+        return current.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return snapshot().contains(o);
+        return current.contains(o);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class ESList<T> implements List<T> {
         var op = new AddOp<>(t);
         binLog.add(op);
         version.incrementAndGet();
-        return false;
+        return (boolean) op.apply(current);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class ESList<T> implements List<T> {
         var op = new RemoveOp<T>(o);
         binLog.add(op);
         version.incrementAndGet();
-        return false;
+        return (boolean) op.apply(current);
     }
 
     @Override
@@ -79,8 +80,7 @@ public class ESList<T> implements List<T> {
         var op = new AddAllOp<T>(c);
         binLog.add(op);
         version.incrementAndGet();
-        return false;
-
+        return (boolean) op.apply(current);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ESList<T> implements List<T> {
         var op = new AddAllIdxOp<T>(index, c);
         binLog.add(op);
         version.incrementAndGet();
-        return false;
+        return (boolean) op.apply(current);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ESList<T> implements List<T> {
         var op = new RemoveAllOp<T>(c);
         binLog.add(op);
         version.incrementAndGet();
-        return false;
+        return (boolean) op.apply(current);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class ESList<T> implements List<T> {
         var op = new RetainAllOp<T>(c);
         binLog.add(op);
         version.incrementAndGet();
-        return false;
+        return (boolean) op.apply(current);
     }
 
     @Override
@@ -112,11 +112,12 @@ public class ESList<T> implements List<T> {
         var op = new CleanOp<T>();
         binLog.add(op);
         version.incrementAndGet();
+        op.apply(current);
     }
 
     @Override
     public T get(int index) {
-        return snapshot().get(index);
+        return current.get(index);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class ESList<T> implements List<T> {
         var op = new SetOp<T>(index, element);
         binLog.add(op);
         version.incrementAndGet();
-        return null;
+        return (T) op.apply(current);
     }
 
     @Override
@@ -132,6 +133,7 @@ public class ESList<T> implements List<T> {
         var op = new AddIdxOp<>(index, element);
         binLog.add(op);
         version.incrementAndGet();
+        op.apply(current);
     }
 
     @Override
@@ -139,17 +141,17 @@ public class ESList<T> implements List<T> {
         var op = new RemoveIdxOp<T>(index);
         binLog.add(op);
         version.incrementAndGet();
-        return null;
+        return (T) op.apply(current);
     }
 
     @Override
     public int indexOf(Object o) {
-        return snapshot().indexOf(o);
+        return current.indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return snapshot().lastIndexOf(o);
+        return current.lastIndexOf(o);
     }
 
     @Override
@@ -167,14 +169,18 @@ public class ESList<T> implements List<T> {
         return snapshot().subList(fromIndex, toIndex);
     }
 
+    public int version() {
+        return version.get();
+    }
+
     public List<T> snapshot() {
         return snapshot(version.get());
     }
 
     public List<T> snapshot(int version) {
-        List<T> snapshot = new ArrayList<>();
+        var snapshot = new ArrayList<T>();
         for (int i = 0; i < version; i++) {
-            snapshot = binLog.get(i).apply(snapshot);
+            binLog.get(i).apply(snapshot);
         }
         return snapshot;
     }
