@@ -1,4 +1,4 @@
-package com.pivovarit.escollections;
+package com.pivovarit.escollections.list;
 
 import org.junit.jupiter.api.Test;
 
