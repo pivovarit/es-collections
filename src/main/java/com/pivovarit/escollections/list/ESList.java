@@ -120,7 +120,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public void add(int index, T element) {
-
+        var op = new AddIdxOp<>(index, element);
+        binLog.add(op);
+        version.incrementAndGet();
     }
 
     @Override
@@ -163,9 +165,7 @@ public class ESList<T> implements List<T> {
     public List<T> snapshot(int version) {
         List<T> snapshot = new ArrayList<>();
         for (int i = 0; i < version; i++) {
-            ListOp<T> tListOp = binLog.get(i);
-            System.out.println("Applying event: " + i + binLog.get(i).toString());
-            snapshot = tListOp.apply(snapshot);
+            snapshot = binLog.get(i).apply(snapshot);
         }
         return snapshot;
     }
