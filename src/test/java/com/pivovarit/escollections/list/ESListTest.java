@@ -15,9 +15,8 @@ class ESListTest {
     void shouldCreateEmpty() {
         List<Integer> sut = ESList.empty();
 
-        assertThat(sut)
-          .hasSize(0)
-          .isEmpty();
+        assertThat(sut.size()).isZero();
+        assertThat(sut.isEmpty()).isTrue();
     }
 
     @Test
@@ -27,9 +26,10 @@ class ESListTest {
         sut.add(42);
         sut.add(13);
 
-        assertThat(sut)
-          .hasSize(2)
-          .containsExactly(42, 13);
+        assertThat(sut.size()).isEqualTo(2);
+        assertThat(sut.contains(42)).isTrue();
+        assertThat(sut.contains(13)).isTrue();
+        assertThat(sut.contains(12398)).isFalse();
     }
 
     @Test
@@ -40,9 +40,9 @@ class ESListTest {
         sut.add(13);
         sut.remove(Integer.valueOf(42));
 
-        assertThat(sut)
-          .hasSize(1)
-          .containsExactly(13);
+        assertThat(sut.size()).isEqualTo(1);
+        assertThat(sut.contains(13)).isTrue();
+        assertThat(sut.contains(42)).isFalse();
     }
 
     @Test
@@ -52,8 +52,7 @@ class ESListTest {
         sut.add(42);
         sut.add(13);
 
-        assertThat(sut)
-          .hasSize(0)
-          .isEmpty();
+        assertThat(sut.size()).isZero();
+        assertThat(sut.isEmpty()).isTrue();
     }
 }
