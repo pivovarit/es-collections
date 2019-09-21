@@ -7,22 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.List.of;
-
 public class ESList<T> implements List<T> {
-
-    public static void main(String[] args) {
-        var instance = newInstance();
-        instance.add(1);
-        instance.add(2);
-        instance.add(3);
-        instance.add(4);
-        instance.addAll(of(5, 6, 7));
-        instance.remove(Integer.valueOf(2));
-        instance.remove(Integer.valueOf(3));
-        instance.displayLog();
-        System.out.println(instance.snapshot());
-    }
 
     private final AtomicInteger version = new AtomicInteger(0);
 
@@ -71,16 +56,16 @@ public class ESList<T> implements List<T> {
     @Override
     public boolean add(T t) {
         var op = new AddOp<>(t);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (boolean) op.apply(snapshot());
     }
 
     @Override
     public boolean remove(Object o) {
         var op = new RemoveOp<T>(o);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (boolean) op.apply(snapshot());
     }
 
@@ -92,41 +77,40 @@ public class ESList<T> implements List<T> {
     @Override
     public boolean addAll(Collection<? extends T> c) {
         var op = new AddAllOp<T>(c);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (boolean) op.apply(snapshot());
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
         var op = new AddAllIdxOp<T>(index, c);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (boolean) op.apply(snapshot());
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
         var op = new RemoveAllOp<T>(c);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (boolean) op.apply(snapshot());
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
         var op = new RetainAllOp<T>(c);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (boolean) op.apply(snapshot());
     }
 
     @Override
     public void clear() {
         var op = new ClearOp<T>();
-        binLog.add(op);
-        version.incrementAndGet();
-        op.apply(snapshot());
+        register(op);
+        incrementVersion();
     }
 
     @Override
@@ -137,24 +121,24 @@ public class ESList<T> implements List<T> {
     @Override
     public T set(int index, T element) {
         var op = new SetOp<>(index, element);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (T) op.apply(snapshot());
     }
 
     @Override
     public void add(int index, T element) {
         var op = new AddIdxOp<>(index, element);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         op.apply(snapshot());
     }
 
     @Override
     public T remove(int index) {
         var op = new RemoveIdxOp<T>(index);
-        binLog.add(op);
-        version.incrementAndGet();
+        register(op);
+        incrementVersion();
         return (T) op.apply(snapshot());
     }
 
@@ -201,7 +185,15 @@ public class ESList<T> implements List<T> {
 
     public void displayLog() {
         for (int i = 0; i < version.get(); i++) {
-            System.out.printf("%d :: %s%n", i, binLog.get(i).toString());
+            System.out.printf("v%d :: %s%n", i, binLog.get(i).toString());
         }
+    }
+
+    private void register(ListOp<T> op) {
+        binLog.add(op);
+    }
+
+    private void incrementVersion() {
+        version.incrementAndGet();
     }
 }
