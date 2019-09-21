@@ -104,10 +104,6 @@ class ESListAPITest {
     }
 
     @Test // TODO
-    void testAddAll() {
-    }
-
-    @Test // TODO
     void removeAll() {
     }
 
@@ -115,8 +111,12 @@ class ESListAPITest {
     void retainAll() {
     }
 
-    @Test // TODO
+    @Test
     void clear() {
+        var list = ESList.empty();
+        list.add(1);
+        list.clear();
+        assertThat(list).isEmpty();
     }
 
     @Test // TODO
@@ -125,14 +125,6 @@ class ESListAPITest {
 
     @Test // TODO
     void set() {
-    }
-
-    @Test // TODO
-    void testAdd() {
-    }
-
-    @Test // TODO
-    void testRemove() {
     }
 
     @Test // TODO
