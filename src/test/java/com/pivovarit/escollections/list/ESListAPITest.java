@@ -1,6 +1,5 @@
 package com.pivovarit.escollections.list;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -14,34 +13,34 @@ class ESListAPITest {
 
     @Test
     void empty() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         assertThat(list.isEmpty()).isTrue();
         list.add(1);
     }
 
     @Test
     void not_empty() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         assertThat(list.isEmpty()).isFalse();
     }
 
     @Test
     void size_empty() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         assertThat(list.size()).isZero();
     }
 
     @Test
     void size_not_empty() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(ThreadLocalRandom.current().nextInt());
         assertThat(list.size()).isEqualTo(1);
     }
 
     @Test
     void contains() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         assertThat(list.contains(1)).isTrue();
         assertThat(list.contains(42)).isFalse();
@@ -49,7 +48,7 @@ class ESListAPITest {
 
     @Test
     void iterator() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -64,7 +63,7 @@ class ESListAPITest {
 
     @Test
     void toArray() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -74,7 +73,7 @@ class ESListAPITest {
 
     @Test
     void toArrayGeneric() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -84,7 +83,7 @@ class ESListAPITest {
 
     @Test
     void add() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
 
         sut.add(42);
         sut.add(13);
@@ -97,7 +96,7 @@ class ESListAPITest {
 
     @Test
     void remove() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
 
         sut.add(42);
         sut.add(13);
@@ -110,7 +109,7 @@ class ESListAPITest {
 
     @Test
     void containsAll() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
 
         sut.add(42);
         sut.add(13);
@@ -120,7 +119,7 @@ class ESListAPITest {
 
     @Test
     void addAll() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
 
         sut.addAll(List.of(42, 13));
 
@@ -129,7 +128,7 @@ class ESListAPITest {
 
     @Test
     void removeAll() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -140,7 +139,7 @@ class ESListAPITest {
 
     @Test
     void retainAll() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -151,7 +150,7 @@ class ESListAPITest {
 
     @Test
     void clear() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.clear();
         assertThat(list).isEmpty();
@@ -159,7 +158,7 @@ class ESListAPITest {
 
     @Test
     void get() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         var result = list.get(0);
         assertThat(result).isEqualTo(1);
@@ -167,7 +166,7 @@ class ESListAPITest {
 
     @Test
     void set() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.set(0, 0);
         var result = list.get(0);
@@ -177,7 +176,7 @@ class ESListAPITest {
 
     @Test
     void indexOf() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
         sut.add(3);
         sut.add(2);
         sut.add(3);
@@ -187,7 +186,7 @@ class ESListAPITest {
 
     @Test
     void lastIndexOf() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
         sut.add(3);
         sut.add(2);
         sut.add(3);
@@ -197,7 +196,7 @@ class ESListAPITest {
 
     @Test
     void listIterator() {
-        var list = ESList.instance();
+        var list = ESList.newInstance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -213,7 +212,7 @@ class ESListAPITest {
 
     @Test
     void subList() {
-        var sut = ESList.instance();
+        var sut = ESList.newInstance();
         sut.add(1);
         sut.add(2);
         sut.add(3);

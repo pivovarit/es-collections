@@ -15,4 +15,9 @@ class AddAllOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.addAll(elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("addAll(%s)", elem);
+    }
 }

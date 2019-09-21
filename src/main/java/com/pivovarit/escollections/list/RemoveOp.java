@@ -14,4 +14,9 @@ class RemoveOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.remove(elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("remove(%s)", elem);
+    }
 }

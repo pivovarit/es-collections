@@ -17,4 +17,9 @@ class AddAllIdxOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.addAll(idx, elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("addAll(%d, %s)", idx, elem);
+    }
 }

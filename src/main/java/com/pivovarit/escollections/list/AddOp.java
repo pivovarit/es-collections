@@ -13,4 +13,9 @@ class AddOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.add(elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("add(%s)", elem);
+    }
 }

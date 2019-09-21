@@ -15,4 +15,9 @@ class RetainAllOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.retainAll(elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("retainAll(%s)", elem);
+    }
 }

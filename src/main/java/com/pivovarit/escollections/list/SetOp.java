@@ -16,4 +16,9 @@ class SetOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.set(idx, elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("set{idx=%d, elem=%s}", idx, elem);
+    }
 }

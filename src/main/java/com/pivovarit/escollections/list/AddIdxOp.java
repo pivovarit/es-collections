@@ -16,4 +16,9 @@ class AddIdxOp<T> implements ListOp<T> {
         list.add(idx, elem);
         return null;
     }
+
+    @Override
+    public String toString() {
+        return String.format("add(%d, %s)", idx, elem);
+    }
 }

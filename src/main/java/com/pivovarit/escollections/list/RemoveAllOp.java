@@ -15,4 +15,9 @@ class RemoveAllOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.removeAll(elem);
     }
+
+    @Override
+    public String toString() {
+        return String.format("removeAll(%s)", elem);
+    }
 }

@@ -14,4 +14,9 @@ class RemoveIdxOp<T> implements ListOp<T> {
     public Object apply(List<T> list) {
         return list.remove((int) idx);
     }
+
+    @Override
+    public String toString() {
+        return String.format("remove(index = %d)", idx);
+    }
 }
