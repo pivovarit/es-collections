@@ -3,6 +3,8 @@ package com.pivovarit.escollections.list;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -45,9 +47,19 @@ class ESListAPITest {
         assertThat(list.contains(42)).isFalse();
     }
 
-    @Disabled // TODO
     @Test
     void iterator() {
+        var list = ESList.instance();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+
+        var result = new ArrayList<>();
+        for (Iterator<Object> iterator = list.iterator(); iterator.hasNext(); ) {
+            result.add(iterator.next());
+        }
+
+        assertThat(list).containsExactlyElementsOf(result);
     }
 
     @Test
@@ -115,14 +127,26 @@ class ESListAPITest {
         assertThat(sut).containsExactly(42, 13);
     }
 
-    @Disabled // TODO
     @Test
     void removeAll() {
+        var list = ESList.instance();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.removeAll(List.of(2, 3));
+
+        assertThat(list).containsExactly(1);
     }
 
-    @Disabled // TODO
     @Test
     void retainAll() {
+        var list = ESList.instance();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.retainAll(List.of(3));
+
+        assertThat(list).containsExactly(3);
     }
 
     @Test
@@ -143,14 +167,24 @@ class ESListAPITest {
     void set() {
     }
 
-    @Disabled // TODO
     @Test
     void indexOf() {
+        var sut = ESList.instance();
+        sut.add(3);
+        sut.add(2);
+        sut.add(3);
+
+        assertThat(sut.indexOf(3)).isEqualTo(0);
     }
 
-    @Disabled // TODO
     @Test
     void lastIndexOf() {
+        var sut = ESList.instance();
+        sut.add(3);
+        sut.add(2);
+        sut.add(3);
+
+        assertThat(sut.lastIndexOf(3)).isEqualTo(2);
     }
 
     @Disabled // TODO
@@ -163,8 +197,12 @@ class ESListAPITest {
     void testListIterator() {
     }
 
-    @Disabled // TODO
     @Test
     void subList() {
+        var sut = ESList.instance();
+        sut.add(1);
+        sut.add(2);
+        sut.add(3);
+        assertThat(sut.subList(1, 3)).containsExactly(2, 3);
     }
 }

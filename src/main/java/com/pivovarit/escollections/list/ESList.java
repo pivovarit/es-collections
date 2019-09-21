@@ -85,6 +85,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
+        var op = new AddAllIdxOp<T>(index, c);
+        binLog.add(op);
+        version.incrementAndGet();
         return false;
     }
 
@@ -98,6 +101,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
+        var op = new RetainAllOp<T>(c);
+        binLog.add(op);
+        version.incrementAndGet();
         return false;
     }
 
@@ -105,6 +111,7 @@ public class ESList<T> implements List<T> {
     public void clear() {
         var op = new CleanOp<T>();
         binLog.add(op);
+
         version.incrementAndGet();
     }
 
