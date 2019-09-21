@@ -13,7 +13,7 @@ class ESListTest {
 
     @Test
     void shouldCreateEmpty() {
-        List<Integer> sut = new ESList<>();
+        List<Integer> sut = ESList.empty();
 
         assertThat(sut)
           .hasSize(0)
@@ -22,7 +22,7 @@ class ESListTest {
 
     @Test
     void shouldAddAndGet() {
-        List<Integer> sut = new ESList<>();
+        List<Integer> sut = ESList.empty();
 
         sut.add(42);
         sut.add(13);
@@ -34,7 +34,7 @@ class ESListTest {
 
     @Test
     void shouldAddAndRemove() {
-        List<Integer> sut = new ESList<>();
+        List<Integer> sut = ESList.empty();
 
         sut.add(42);
         sut.add(13);
@@ -47,7 +47,7 @@ class ESListTest {
 
     @Test
     void shouldRemoveAll() {
-        List<Integer> sut = new ESList<>();
+        List<Integer> sut = ESList.empty();
 
         sut.add(42);
         sut.add(13);

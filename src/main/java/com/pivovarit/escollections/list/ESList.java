@@ -7,6 +7,13 @@ import java.util.ListIterator;
 
 public class ESList<T> implements List<T> {
 
+    private ESList() {
+    }
+
+    public static <T> ESList<T> empty() {
+        return new ESList<>();
+    }
+
     @Override
     public int size() {
         return 0;
