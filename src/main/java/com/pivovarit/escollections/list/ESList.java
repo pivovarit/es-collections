@@ -9,14 +9,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ESList<T> implements List<T> {
 
-    private final AtomicInteger version = new AtomicInteger();
+    private final AtomicInteger version = new AtomicInteger(0);
 
-    private final List<ListOp<T>> eventLog = new ArrayList<>(); // TODO concurrent access
+    /**
+     * append-only bin log (infinite retention for now)
+     */
+    private final List<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access
 
     private ESList() {
     }
 
-    public static <T> ESList<T> empty() {
+    public static <T> ESList<T> instance() {
         return new ESList<>();
     }
 
@@ -32,7 +35,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean contains(Object o) {
-        return snapshot().isEmpty();
+        return snapshot().contains(o);
     }
 
     @Override
@@ -52,11 +55,17 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean add(T t) {
+        var op = new AddOp<>(t);
+        binLog.add(op);
+        version.incrementAndGet();
         return false;
     }
 
     @Override
     public boolean remove(Object o) {
+        var op = new RemoveOp<T>(o);
+        binLog.add(op);
+        version.incrementAndGet();
         return false;
     }
 
@@ -67,7 +76,11 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
+        var op = new AddAllOp<T>(c);
+        binLog.add(op);
+        version.incrementAndGet();
         return false;
+
     }
 
     @Override
@@ -77,6 +90,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean removeAll(Collection<?> c) {
+        var op = new RemoveAllOp<T>(c);
+        binLog.add(op);
+        version.incrementAndGet();
         return false;
     }
 
@@ -87,7 +103,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public void clear() {
-
+        var op = new CleanOp<T>();
+        binLog.add(op);
+        version.incrementAndGet();
     }
 
     @Override
@@ -107,6 +125,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public T remove(int index) {
+        var op = new RemoveIdxOp<T>(index);
+        binLog.add(op);
+        version.incrementAndGet();
         return null;
     }
 
@@ -135,10 +156,15 @@ public class ESList<T> implements List<T> {
         return snapshot().subList(fromIndex, toIndex);
     }
 
-    private List<T> snapshot() {
+    public List<T> snapshot() {
+        return snapshot(version.get());
+    }
+
+    public List<T> snapshot(int version) {
         List<T> snapshot = new ArrayList<>();
-        for (int i = 0; i < version.get(); i++) {
-            ListOp<T> tListOp = eventLog.get(i);
+        for (int i = 0; i < version; i++) {
+            ListOp<T> tListOp = binLog.get(i);
+            System.out.println("Applying event: " + i + binLog.get(i).toString());
             snapshot = tListOp.apply(snapshot);
         }
         return snapshot;

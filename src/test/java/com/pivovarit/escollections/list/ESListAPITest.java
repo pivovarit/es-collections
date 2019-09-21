@@ -8,39 +8,38 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
 class ESListAPITest {
 
     @Test
     void empty() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         assertThat(list.isEmpty()).isTrue();
         list.add(1);
     }
 
     @Test
     void not_empty() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         list.add(1);
         assertThat(list.isEmpty()).isFalse();
     }
 
     @Test
     void size_empty() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         assertThat(list.size()).isZero();
     }
 
     @Test
     void size_not_empty() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         list.add(ThreadLocalRandom.current().nextInt());
-        assertThat(list.size()).isZero();
+        assertThat(list.size()).isEqualTo(1);
     }
 
     @Test
     void contains() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         list.add(1);
         assertThat(list.contains(1)).isTrue();
         assertThat(list.contains(42)).isFalse();
@@ -53,7 +52,7 @@ class ESListAPITest {
 
     @Test
     void toArray() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -63,7 +62,7 @@ class ESListAPITest {
 
     @Test
     void toArrayGeneric() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         list.add(1);
         list.add(2);
         list.add(3);
@@ -73,7 +72,7 @@ class ESListAPITest {
 
     @Test
     void add() {
-        var sut = ESList.empty();
+        var sut = ESList.instance();
 
         sut.add(42);
         sut.add(13);
@@ -86,7 +85,7 @@ class ESListAPITest {
 
     @Test
     void remove() {
-        var sut = ESList.empty();
+        var sut = ESList.instance();
 
         sut.add(42);
         sut.add(13);
@@ -99,7 +98,7 @@ class ESListAPITest {
 
     @Test
     void containsAll() {
-        var sut = ESList.empty();
+        var sut = ESList.instance();
 
         sut.add(42);
         sut.add(13);
@@ -109,7 +108,7 @@ class ESListAPITest {
 
     @Test
     void addAll() {
-        var sut = ESList.empty();
+        var sut = ESList.instance();
 
         sut.addAll(List.of(42, 13));
 
@@ -128,7 +127,7 @@ class ESListAPITest {
 
     @Test
     void clear() {
-        var list = ESList.empty();
+        var list = ESList.instance();
         list.add(1);
         list.clear();
         assertThat(list).isEmpty();
