@@ -157,14 +157,22 @@ class ESListAPITest {
         assertThat(list).isEmpty();
     }
 
-    @Disabled // TODO
     @Test
     void get() {
+        var list = ESList.instance();
+        list.add(1);
+        var result = list.get(0);
+        assertThat(result).isEqualTo(1);
     }
 
-    @Disabled // TODO
     @Test
     void set() {
+        var list = ESList.instance();
+        list.add(1);
+        list.set(0, 0);
+        var result = list.get(0);
+
+        assertThat(result).isEqualTo(0);
     }
 
     @Test
@@ -187,14 +195,20 @@ class ESListAPITest {
         assertThat(sut.lastIndexOf(3)).isEqualTo(2);
     }
 
-    @Disabled // TODO
     @Test
     void listIterator() {
-    }
+        var list = ESList.instance();
+        list.add(1);
+        list.add(2);
+        list.add(3);
 
-    @Disabled // TODO
-    @Test
-    void testListIterator() {
+        var result = new ArrayList<>();
+        for (Iterator<Object> iterator = list.listIterator(); iterator.hasNext(); ) {
+            result.add(iterator.next());
+        }
+
+        assertThat(list).containsExactlyElementsOf(result);
+
     }
 
     @Test

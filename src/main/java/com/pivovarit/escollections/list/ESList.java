@@ -111,7 +111,6 @@ public class ESList<T> implements List<T> {
     public void clear() {
         var op = new CleanOp<T>();
         binLog.add(op);
-
         version.incrementAndGet();
     }
 
@@ -122,6 +121,9 @@ public class ESList<T> implements List<T> {
 
     @Override
     public T set(int index, T element) {
+        var op = new SetOp<T>(index, element);
+        binLog.add(op);
+        version.incrementAndGet();
         return null;
     }
 
