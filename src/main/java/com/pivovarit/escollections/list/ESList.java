@@ -127,17 +127,17 @@ public class ESList<T> implements List<T> {
 
     @Override
     public ListIterator<T> listIterator() {
-        return current.listIterator();
+        return snapshot().listIterator();
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return current.listIterator(index);
+        return snapshot().listIterator(index);
     }
 
     @Override
     public List<T> subList(int fromIndex, int toIndex) {
-        return current.subList(fromIndex, toIndex);
+        return snapshot().subList(fromIndex, toIndex);
     }
 
     public int version() {
