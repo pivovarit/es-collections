@@ -16,6 +16,8 @@ public class ESList<T> implements List<T> {
      */
     private final List<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access
 
+    private final List<T> current = new ArrayList<>();
+
     private ESList() {
     }
 
@@ -25,32 +27,32 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int size() {
-        return snapshot().size();
+        return current.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return snapshot().isEmpty();
+        return current.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return snapshot().contains(o);
+        return current.contains(o);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return snapshot().iterator();
+        return current.iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return snapshot().toArray();
+        return current.toArray();
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return snapshot().toArray(a);
+        return current.toArray(a);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return snapshot().containsAll(c);
+        return current.containsAll(c);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        return snapshot().get(index);
+        return current.get(index);
     }
 
     @Override
@@ -115,12 +117,12 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int indexOf(Object o) {
-        return snapshot().indexOf(o);
+        return current.indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return snapshot().lastIndexOf(o);
+        return current.lastIndexOf(o);
     }
 
     @Override
@@ -159,9 +161,10 @@ public class ESList<T> implements List<T> {
             System.out.printf("v%d :: %s%n", i, binLog.get(i).toString());
         }
     }
-    private Object handle(ListOp<T> op) {
+
+    private synchronized Object handle(ListOp<T> op) {
         binLog.add(op);
         version.incrementAndGet();
-        return op.apply(snapshot());
+        return op.apply(current);
     }
 }
