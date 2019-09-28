@@ -7,7 +7,7 @@ class RetainAllOp<T> implements ListOp<T> {
 
     private final Collection<?> elem;
 
-    public RetainAllOp(Collection<?> elem) {
+    RetainAllOp(Collection<?> elem) {
         this.elem = elem;
     }
 

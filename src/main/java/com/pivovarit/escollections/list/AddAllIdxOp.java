@@ -8,7 +8,7 @@ class AddAllIdxOp<T> implements ListOp<T> {
     private final int idx;
     private final Collection<? extends T> elem;
 
-    public AddAllIdxOp(int idx, Collection<? extends T> elem) {
+    AddAllIdxOp(int idx, Collection<? extends T> elem) {
         this.idx = idx;
         this.elem = elem;
     }
