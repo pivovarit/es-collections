@@ -7,7 +7,7 @@ class SetOp<T> implements ListOp<T> {
     private final int idx;
     private final T elem;
 
-    public SetOp(int idx, T elem) {
+    SetOp(int idx, T elem) {
         this.idx = idx;
         this.elem = elem;
     }

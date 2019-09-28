@@ -6,7 +6,7 @@ class RemoveIdxOp<T> implements ListOp<T> {
 
     private final int idx;
 
-    public RemoveIdxOp(int idx) {
+    RemoveIdxOp(int idx) {
         this.idx = idx;
     }
 

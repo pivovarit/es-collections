@@ -6,7 +6,7 @@ class RemoveOp<T> implements ListOp<T> {
 
     private final Object elem;
 
-    public RemoveOp(Object elem) {
+    RemoveOp(Object elem) {
         this.elem = elem;
     }
 
