@@ -170,9 +170,11 @@ public class ESList<T> implements List<T> {
         }
     }
 
-    private synchronized Object handle(ListOp<T> op) {
-        binLog.add(op);
-        version.incrementAndGet();
+    private Object handle(ListOp<T> op) {
+        synchronized (binLog) {
+            binLog.add(op);
+            version.incrementAndGet();
+        }
         return op.apply(current);
     }
 }
