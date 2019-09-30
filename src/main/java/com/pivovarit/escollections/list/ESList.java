@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 public class ESList<T> implements List<T> {
 
@@ -16,13 +17,20 @@ public class ESList<T> implements List<T> {
      */
     private final List<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access
 
-    private final List<T> current = new ArrayList<>();
+    private final Supplier<List<T>> listProvider;
+    private final List<T> current;
 
-    private ESList() {
+    private ESList(Supplier<List<T>> listProvider) {
+        this.listProvider = listProvider;
+        this.current = listProvider.get();
     }
 
     public static <T> ESList<T> newInstance() {
-        return new ESList<>();
+        return new ESList<>(ArrayList::new);
+    }
+
+    public static <T> ESList<T> newInstance(Supplier<List<T>> supplier) {
+        return new ESList<>(supplier);
     }
 
     @Override
@@ -149,7 +157,7 @@ public class ESList<T> implements List<T> {
     }
 
     public List<T> snapshot(int version) {
-        var snapshot = new ArrayList<T>();
+        var snapshot = listProvider.get();
         for (int i = 0; i < version; i++) {
             binLog.get(i).apply(snapshot);
         }
