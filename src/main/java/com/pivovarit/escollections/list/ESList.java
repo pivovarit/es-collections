@@ -174,7 +174,13 @@ public class ESList<T> implements List<T> {
         synchronized (binLog) {
             binLog.add(op);
             version.incrementAndGet();
+            try {
+                return op.apply(current);
+            } catch (Exception e) {
+                binLog.remove(binLog.size() - 1);
+                version.decrementAndGet();
+                throw e;
+            }
         }
-        return op.apply(current);
     }
 }
