@@ -218,4 +218,18 @@ class ESListAPITest {
         sut.add(3);
         assertThat(sut.subList(1, 3)).containsExactly(2, 3);
     }
+
+    @Test
+    void exceptionPropagation() {
+        var sut = ESList.newInstance();
+        sut.add(1);
+        sut.add(2);
+        sut.add(3);
+
+        try {
+            sut.set(1000, 1000);
+        } catch (Exception e) { }
+
+        assertThat(sut.snapshot()).containsExactly(1, 2, 3);
+    }
 }
