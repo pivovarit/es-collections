@@ -154,7 +154,9 @@ public class ESList<T> implements List<T> {
     public List<T> snapshot(int version) {
         var snapshot = new ArrayList<T>();
         for (int i = 0; i < version; i++) {
-            binLog.get(i).apply(snapshot);
+            try {
+                binLog.get(i).apply(snapshot);
+            } catch (Exception ignored) { }
         }
         return snapshot;
     }
@@ -168,12 +170,6 @@ public class ESList<T> implements List<T> {
     private synchronized Object handle(ListOp<T> op) {
         binLog.add(op);
         version.incrementAndGet();
-        try {
-            return op.apply(current);
-        } catch (Exception e) {
-            binLog.remove(binLog.size() - 1);
-            version.decrementAndGet();
-            throw e;
-        }
+        return op.apply(current);
     }
 }
