@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ESList<T> implements List<T> {
 
     private static final InitOp<?> EMPTY_INIT = new InitOp<>();
+
     private final AtomicInteger version = new AtomicInteger(0);
 
     /**
