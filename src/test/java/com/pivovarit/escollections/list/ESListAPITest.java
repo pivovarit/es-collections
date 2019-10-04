@@ -12,6 +12,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ESListAPITest {
 
     @Test
+    void no_exception_snapshot() {
+        var list = ESList.newInstance();
+        try {
+            list.remove(42);
+        } catch (Exception e) {
+        }
+
+        list.snapshot();
+    }
+
+    @Test
     void empty() {
         var list = ESList.newInstance();
         assertThat(list.isEmpty()).isTrue();

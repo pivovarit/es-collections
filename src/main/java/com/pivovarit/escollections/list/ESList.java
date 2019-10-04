@@ -6,9 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 
+/**
+ * snapshottable cache-aware lock-free concurrent retaining list
+ */
 public class ESList<T> implements List<T> {
+
+    private static final InitOp<?> EMPTY_INIT = new InitOp<>();
 
     private final AtomicInteger version = new AtomicInteger(0);
 
@@ -17,20 +21,14 @@ public class ESList<T> implements List<T> {
      */
     private final List<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access
 
-    private final Supplier<List<T>> listProvider;
-    private final List<T> current;
+    private final List<T> current = new ArrayList<>();
 
-    private ESList(Supplier<List<T>> listProvider) {
-        this.listProvider = listProvider;
-        this.current = listProvider.get();
+    private ESList() {
+        handle((InitOp<T>) EMPTY_INIT);
     }
 
     public static <T> ESList<T> newInstance() {
-        return new ESList<>(ArrayList::new);
-    }
-
-    public static <T> ESList<T> newInstance(Supplier<List<T>> supplier) {
-        return new ESList<>(supplier);
+        return new ESList<>();
     }
 
     @Override
@@ -157,9 +155,11 @@ public class ESList<T> implements List<T> {
     }
 
     public List<T> snapshot(int version) {
-        var snapshot = listProvider.get();
+        var snapshot = new ArrayList<T>();
         for (int i = 0; i < version; i++) {
-            binLog.get(i).apply(snapshot);
+            try {
+                binLog.get(i).apply(snapshot);
+            } catch (Exception ignored) { }
         }
         return snapshot;
     }
@@ -170,17 +170,9 @@ public class ESList<T> implements List<T> {
         }
     }
 
-    private Object handle(ListOp<T> op) {
-        synchronized (binLog) {
-            binLog.add(op);
-            version.incrementAndGet();
-            try {
-                return op.apply(current);
-            } catch (Exception e) {
-                binLog.remove(binLog.size() - 1);
-                version.decrementAndGet();
-                throw e;
-            }
-        }
+    private synchronized Object handle(ListOp<T> op) {
+        binLog.add(op);
+        version.incrementAndGet();
+        return op.apply(current);
     }
 }
