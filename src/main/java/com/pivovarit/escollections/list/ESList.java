@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * snapshottable cache-aware lock-free concurrent retaining list
+ */
 public class ESList<T> implements List<T> {
 
     private static final InitOp<?> EMPTY_INIT = new InitOp<>();
