@@ -168,6 +168,12 @@ public class ESList<T> implements List<T> {
     private synchronized Object handle(ListOp<T> op) {
         binLog.add(op);
         version.incrementAndGet();
-        return op.apply(current);
+        try {
+            return op.apply(current);
+        } catch (Exception e) {
+            binLog.remove(binLog.size() - 1);
+            version.decrementAndGet();
+            throw e;
+        }
     }
 }
