@@ -17,6 +17,7 @@ class ESListAPITest {
         try {
             list.remove(42);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         list.snapshot();
