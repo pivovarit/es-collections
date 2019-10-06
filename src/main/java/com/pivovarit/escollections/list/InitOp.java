@@ -11,6 +11,6 @@ class InitOp<T> implements ListOp<T> {
 
     @Override
     public String toString() {
-        return "init()";
+        return "init[]";
     }
 }

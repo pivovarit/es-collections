@@ -37,6 +37,7 @@
         <junit.version>5.5.1</junit.version>
         <assertj.version>3.13.2</assertj.version>
         <awaitility.version>4.0.1</awaitility.version>
+        <jmh.version>1.21</jmh.version>
         <quickcheck.version>0.9</quickcheck.version>
     </properties>
 
@@ -142,6 +143,17 @@
             <artifactId>junit-quickcheck-generators</artifactId>
             <version>${quickcheck.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
