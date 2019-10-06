@@ -181,8 +181,12 @@ public class ESList<T> implements List<T> {
         while (version != ecViewVersion.get() + 1) {
             Thread.onSpinWait();
         }
-        Object result = op.apply(ecView);
-        ecViewVersion.incrementAndGet();
+        Object result;
+        try {
+            result = op.apply(ecView);
+        } finally {
+            ecViewVersion.incrementAndGet();
+        }
         return result;
     }
 
