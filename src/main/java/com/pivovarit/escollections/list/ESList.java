@@ -19,7 +19,7 @@ public class ESList<T> implements List<T> {
     /**
      * append-only bin log (infinite retention for now)
      */
-    private final List<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access
+    private final ArrayList<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access
 
     private final List<T> current = new ArrayList<>();
 
