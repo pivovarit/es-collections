@@ -37,6 +37,7 @@ public class EsListBinLogContentionBenchmark {
         return list.add(42);
     }
 
+    // TODO reasonable values
     public static void main(String[] args) throws RunnerException {
         var result = new Runner(
           new OptionsBuilder()
