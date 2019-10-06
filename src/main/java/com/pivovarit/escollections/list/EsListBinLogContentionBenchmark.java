@@ -19,15 +19,21 @@ public class EsListBinLogContentionBenchmark {
     private static final List<Integer> list = ESList.newInstance();
     private static final List<Integer> arraylist = new ArrayList<>();
 
-    @Threads(THREADS)
+    @Threads(1)
     @Benchmark
     public boolean binlog_contention_baseline() {
         return arraylist.add(42);
     }
 
-    @Threads(THREADS)
+    @Threads(1)
     @Benchmark
     public boolean binlog_contention() {
+        return list.add(42);
+    }
+
+    @Threads(16)
+    @Benchmark
+    public boolean binlog_contented() {
         return list.add(42);
     }
 
@@ -35,8 +41,8 @@ public class EsListBinLogContentionBenchmark {
         var result = new Runner(
           new OptionsBuilder()
             .include(EsListBinLogContentionBenchmark.class.getSimpleName())
-            .warmupIterations(4)
-            .measurementIterations(4)
+            .warmupIterations(1)
+            .measurementIterations(1)
             .forks(1)
             .build()).run();
     }
