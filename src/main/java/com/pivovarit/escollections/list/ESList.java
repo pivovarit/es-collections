@@ -12,16 +12,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ESList<T> implements List<T> {
 
+    private static final int INITIAL_VERSION = -1;
+
     private static final InitOp<?> EMPTY_INIT = new InitOp<>();
 
-    private final AtomicInteger version = new AtomicInteger(0);
+    private final AtomicInteger version = new AtomicInteger(INITIAL_VERSION);
+    private final AtomicInteger ecViewVersion = new AtomicInteger(INITIAL_VERSION);
 
     /**
      * append-only bin log (infinite retention for now)
      */
-    private final ArrayList<ListOp<T>> binLog = new ArrayList<>(); // TODO manage concurrent access and retention
+    private final List<ListOp<T>> binLog = new ArrayList<>();
 
-    private final List<T> current = new ArrayList<>();
+    private final List<T> ecView = new ArrayList<>();
 
     private ESList() {
         handle((InitOp<T>) EMPTY_INIT);
@@ -33,32 +36,32 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int size() {
-        return current.size();
+        return ecView.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return current.isEmpty();
+        return ecView.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        return current.contains(o);
+        return ecView.contains(o);
     }
 
     @Override
     public Iterator<T> iterator() {
-        return current.iterator();
+        return ecView.iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return current.toArray();
+        return ecView.toArray();
     }
 
     @Override
     public <T1> T1[] toArray(T1[] a) {
-        return current.toArray(a);
+        return ecView.toArray(a);
     }
 
     @Override
@@ -73,7 +76,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return current.containsAll(c);
+        return ecView.containsAll(c);
     }
 
     @Override
@@ -103,7 +106,7 @@ public class ESList<T> implements List<T> {
 
     @Override
     public T get(int index) {
-        return current.get(index);
+        return ecView.get(index);
     }
 
     @Override
@@ -123,12 +126,12 @@ public class ESList<T> implements List<T> {
 
     @Override
     public int indexOf(Object o) {
-        return current.indexOf(o);
+        return ecView.indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return current.lastIndexOf(o);
+        return ecView.lastIndexOf(o);
     }
 
     @Override
@@ -151,7 +154,7 @@ public class ESList<T> implements List<T> {
     }
 
     public List<T> snapshot() {
-        return snapshot(version.get());
+        return snapshot(version.get() + 1);
     }
 
     public List<T> snapshot(int version) {
@@ -165,14 +168,30 @@ public class ESList<T> implements List<T> {
     }
 
     public void displayLog() {
-        for (int i = 0; i < version.get(); i++) {
+        for (int i = 0; i < version.get() + 1; i++) {
             System.out.printf("v%d :: %s%n", i, binLog.get(i).toString());
         }
     }
 
-    private synchronized Object handle(ListOp<T> op) {
-        binLog.add(op);
-        version.incrementAndGet();
-        return op.apply(current);
+    private Object handle(ListOp<T> op) {
+        return updateEcView(op, append(op));
+    }
+
+    private Object updateEcView(ListOp<T> op, int version) {
+        while (version != ecViewVersion.get() + 1) {
+            Thread.onSpinWait();
+        }
+        Object result = op.apply(ecView);
+        ecViewVersion.incrementAndGet();
+        return result;
+    }
+
+    private int append(ListOp<T> op) {
+        synchronized (binLog) {
+            binLog.add(null); // resize before serializing writes
+        }
+        int nextVersion = this.version.incrementAndGet();
+        binLog.set(nextVersion, op);
+        return nextVersion;
     }
 }
