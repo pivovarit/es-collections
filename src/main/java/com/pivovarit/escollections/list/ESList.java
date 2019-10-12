@@ -16,6 +16,8 @@ public class ESList<T> implements List<T> {
 
     private static final InitOp<?> EMPTY_INIT = new InitOp<>();
 
+    private final int retention;
+
     private final AtomicInteger version = new AtomicInteger(INITIAL_VERSION);
     private final AtomicInteger ecViewVersion = new AtomicInteger(INITIAL_VERSION);
 
@@ -27,8 +29,15 @@ public class ESList<T> implements List<T> {
     private final List<T> ecView = new ArrayList<>();
 
     private ESList() {
-        handle((InitOp<T>) EMPTY_INIT);
+        this(100);
     }
+
+    private ESList(int retention) {
+        handle((InitOp<T>) EMPTY_INIT);
+        this.retention = retention;
+    }
+
+
 
     public static <T> ESList<T> newInstance() {
         return new ESList<>();
