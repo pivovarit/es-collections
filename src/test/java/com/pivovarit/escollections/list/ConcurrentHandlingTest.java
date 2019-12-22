@@ -18,19 +18,20 @@ class ConcurrentHandlingTest {
 
     @Test
     void binlog_concurrent_modification() throws Exception {
-        var ints = ESList.newInstance();
-        executeInParallel(() -> ints.add(1), 100);
+        ESList<Integer> ints = ESList.newInstance();
+        executeInParallel(() -> ints.add(1), 500);
 
-        assertThat(ints.snapshot()).hasSize(100);
+        assertThat(ints.snapshot()).hasSize(500);
     }
 
     @Test
     void snapshot_concurrent_modification() throws Exception {
-        var ints = ESList.newInstance();
+        ESList<Integer> ints = ESList.newInstance();
 
-        executeInParallel(() -> ints.add(1), 100);
+        executeInParallel(() -> ints.add(1), 500);
 
-        assertThat(ints).hasSize(100);
+        assertThat(ints).hasSize(500);
+        assertThat(ints.snapshot().stream().mapToInt(i -> i).sum()).isEqualTo(500);
     }
 
     private void executeInParallel(Runnable runnable, int parallelism) {
