@@ -38,7 +38,7 @@
         <assertj.version>3.18.1</assertj.version>
         <awaitility.version>4.0.1</awaitility.version>
         <jmh.version>1.26</jmh.version>
-        <quickcheck.version>0.9.5</quickcheck.version>
+        <quickcheck.version>1.0</quickcheck.version>
     </properties>
 
     <build>
